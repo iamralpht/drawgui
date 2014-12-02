@@ -193,11 +193,14 @@ Inspector.prototype.select = function(item) {
     }
 }
 Inspector.prototype.deselect = function() {
-    if (!this._focus) return;
+    var focus = this._focus;
+    if (!this._focus) return focus;
     this._handles.hide();
     this._focus = null;
     this._element.classList.remove('show');
+    return focus;
 }
+Inspector.prototype.focused = function() { return this._focus; }
 
 
 function makeInspectable(item, inspector) {

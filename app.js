@@ -37,6 +37,7 @@ function AppController() {
     this._element.appendChild(this._tools.element());
 
     this._grid = new Grid(this, this._frame, this._surface);
+    this._lastManipulated = null;
 }
 AppController.prototype.grid = function() { return this._grid; }
 AppController.prototype.addItem = function(item) {
@@ -48,6 +49,7 @@ AppController.prototype.addItem = function(item) {
     this._grid.snap(item);
     this._surface.appendChild(item.sync());
     makeInspectable(item, this._inspector);
+    this._lastManipulated = item;
 }
 AppController.prototype.allowCreation = function(allow) {
     this._recognizer.element().style.pointerEvents = allow ? '' : 'none';
@@ -55,7 +57,8 @@ AppController.prototype.allowCreation = function(allow) {
 }
 AppController.prototype.allowInspect = function(allow) {
     this._surface.style.pointerEvents = allow ? 'auto' : 'none';
-    if (!allow) this._inspector.deselect();
+    if (!allow) this._lastManipulated = this._inspector.deselect();
+    else if (this._lastManipulated) this._inspector.select(this._lastManipulated);
 }
 
 window.addEventListener('load', function() { new AppController(); }, false);
