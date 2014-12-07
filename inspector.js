@@ -138,6 +138,7 @@ Inspector.prototype.select = function(item) {
     if (this._focus) this.deselect();
     this._focus = item;
     if (!this._focus) return;
+    //console.log('serialized', serialize(item), deserialize(serialize(item)));
     this._handles.show(item);
     this._element.classList.add('show');
     // Do more; show properties of item...
@@ -147,7 +148,7 @@ Inspector.prototype.select = function(item) {
         this._element.removeChild(this._element.firstChild);
     for (var k in this._focus) {
         var typeInfo = this._focus.typeInfo(k);
-        if (!typeInfo) continue;
+        if (!typeInfo || typeInfo.inspectable === false) continue;
         var row = document.createElement('div');
         row.className = 'inspector-row';
         var name = document.createElement('span');

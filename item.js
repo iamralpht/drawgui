@@ -51,7 +51,18 @@ function Item() {
     addProperty('innerGlow', { x: 0, y: 0, radius: 0, color: 'transparent' }, shadowTypeInfo);
     addProperty('shadow', { x: 0, y: 0, radius: 0, color: 'transparent' }, shadowTypeInfo);
     addProperty('children', [], arrayTypeInfo(Item.prototype));
-    addProperty('bounds', { x: 0, y: 0, width: 0, height: 0 });
+
+    var lengthTypeInfo = numberTypeInfo(0, Infinity, 1, 'px');
+    var boundsTypeInfo = objectTypeInfo(
+        {
+            x: coordinateTypeInfo,
+            y: coordinateTypeInfo,
+            width: lengthTypeInfo,
+            height: lengthTypeInfo
+        });
+    boundsTypeInfo.inspectable = false;
+
+    addProperty('bounds', { x: 0, y: 0, width: 0, height: 0 }, boundsTypeInfo);
 
     function scratchProperty(name, initial) {
         Object.defineProperty(
@@ -64,7 +75,11 @@ function Item() {
     scratchProperty('_typeInfo', typeInfo);
     this._typeInfo = typeInfo;
 }
-Item.prototype.typeInfo = function(name) { return this._typeInfo[name]; }
+Item.prototype.typeInfo = function(name) {
+    // XXX: clean this up!
+    if (name == undefined) return this._typeInfo;
+    return this._typeInfo[name];
+}
 Item.prototype.sync = function() {
     // Reflect this item into DOM.
     if (!this._element) this._element = document.createElement('div');
